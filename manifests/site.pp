@@ -1,25 +1,28 @@
-
-node "dev.proxy.az.a.xebia.training.com" {
+node "proxy-dev-az-a.demo.training.com" {
 hiera_include('classes')
 }
 
-node "dev.app.az.a.xebia.training.com" {
+node "proxy-dev-az-b.demo.training.com" {
 hiera_include('classes')
 }
 
-node "dev.app.az.b.xebia.training.com" {
+node "app-dev-az-a.demo.training.com" {
 hiera_include('classes')
 }
 
-node "dev.mysql.az.a.xebia.training.com" {
+node "app-dev-az-b.demo.training.com" {
 hiera_include('classes')
 }
 
-node "dev.zabbix.az.b.xebia.training.com" {
+node "mysql-dev-az-a.demo.training.com" {
 hiera_include('classes')
 }
 
-node "dev.jenkins.az.a.xebia.training.com" {
+node "zabbix-dev-az-b.demo.training.com" {
+hiera_include('classes')
+}
+
+node "jenkins-dev-az-a.demo.training.com" {
 	class{ '::java': 
 		distribution => "jdk",
 	}->
@@ -69,7 +72,7 @@ node "dev.jenkins.az.a.xebia.training.com" {
 	class { 'sonarqube': }
 }
 
-node "dev.logserver.az.a.xebia.training.com" {
+node "dev-logserver-az-a.demo.training.com" {
 	class {'timezone':}
 	class { 'ntp':}
 	class { 'zabbix::agent': }
@@ -100,7 +103,7 @@ node "dev.logserver.az.a.xebia.training.com" {
 		type => 'syslog'
 	}
 	beaver::output::redis{ 'redisout':
-		host =>'dev.logserver.az.a.xebia.training.com',
+		host =>'dev.logserver.az.a.demo.training.com',
 		port => '6379',
 	}
 
