@@ -2,34 +2,38 @@
 classes:
   - nginx
 nginx::nginx_upstreams:
-  'dev.jenkins.az.a.xebia.training.com':
+  'jenkins-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - dev.jenkins.az.a.xebia.training.com:8080
-  'dev.sonar.az.a.xebia.training.com':
+      - jenkins-dev-az-a.demo.training.com:8080
+  'sonar-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - dev.jenkins.az.a.xebia.training.com:9000
-  'dev.nexus.az.a.xebia.training.com':
+      - jenkins-dev-az-a.demo.training.com:9000
+  'nexus-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - dev.jenkins.az.a.xebia.training.com:8081
-  'dev.logserver.az.a.xebia.training.com':
+      - jenkins-dev-az.a.demo.training.com:8081
+  'app-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - dev.logserver.az.a.xebia.training.com:5601
-  'dev.zabbix.az.b.xebia.training.com':
-    ensure: present
-    members:
-      - dev.zabbix.az.b.xebia.training.com:80
+      - dev-app-az-a.demo.training.com:8080
+
 nginx::nginx_vhosts:
-  'jenkins.training.com':
-    proxy: 'http://dev.jenkins.az.a.xebia.training.com' 
-  'logserver.training.com':
-    proxy: 'http://dev.logserver.az.a.xebia.training.com'
-  'monitoring.training.com':
-    proxy: 'http://dev.zabbix.az.b.xebia.training.com'
-  'sonar.training.com':
-    proxy: 'http://dev.sonar.az.a.xebia.training.com'
-  'nexus.training.com':
-    proxy: 'http://dev.nexus.az.a.xebia.training.com'  
+  'demo.training.com':
+    proxy: 'http://app-dev-az-a.demo.training.com/Spring3HibernateApp'
+    server_name:
+      - "demo.training.com"
+      - "test.demo.training.com"
+  'jenkins.demo.training.com':
+    proxy: 'http://jenkins-dev-az-a.demo.training.com'
+  'sonar.demo.training.com':
+    proxy: 'http://sonar-dev-az-a.demo.training.com'
+  'nexus.demo.training.com':
+    proxy: 'http://nexus-dev-az-a.demo.training.com'
+
+nginx::nginx_locations:
+  'Spring3HibernateApp':
+    location: '/Spring3HibernateApp/'
+    vhost: 'demo.training.com'
+    proxy: 'http://app-dev-az-a.demo.training.com'

@@ -1,6 +1,7 @@
 ---
 classes:
   - mysql::server
+  - mysql::dbs
   - pip
   - beaver
   - beaver::input::files
@@ -17,12 +18,19 @@ redis_out:
     port: '6379'
 
 mysql::server::root_password: 'password'
+mysql::server::service_name: 'mysqld'
+mysql::server::package_name: 'mysql-server'
+
 mysql_db:
+  "sonar":
+    user: "sonar"
+    password: "sonar"
+    host: "%"
   "employeedb":
     password: "test"
     user: "test"
     host: "%"
 
 mysql::server::override_options:
-  'mysqld':
-    bind-address: 0.0.0.0
+  mysqld:
+    bind-address: '0.0.0.0'
