@@ -17,7 +17,7 @@ nginx::nginx_upstreams:
   'app-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - dev-app-az-a.demo.training.com:8080
+      - app-dev-az-a.demo.training.com:8080
 
 nginx::nginx_vhosts:
   'demo.training.com':
