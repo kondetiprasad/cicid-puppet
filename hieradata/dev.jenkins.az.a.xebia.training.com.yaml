@@ -1,0 +1,39 @@
+---
+beaver::status: enabled
+beaver_file:
+  "syslog":
+    file: '/var/log/*'
+    type: 'syslog'
+redis_out:
+  'redisout':
+    host: 'dev.logserver.az.a.xebia.training.com'
+    port: '6379'
+display::display: 99
+display::width: 1024
+display::height: 768
+
+java::distribution: "jdk"
+nexus::revision: '01'
+nexus::version: '2.11.4'
+nexus::nexus_context: ""
+nexus::nexus_root:  "/opt"
+
+mysql::server::root_password: 'password'
+mysql::server::databases:
+  "employeedb":
+    ensure: 'present'
+    charset: 'utf8'
+mysql_db:
+  "sonar":
+    user: "sonar"
+    password: "sonar"
+sonarqube::version: '5.2'
+sonarqube::user: 'sonar'
+sonarqube::group: 'sonar'
+sonarqube::service: 'sonar'
+sonarqube::installroot: '/opt/'
+sonarqube::jdbc: 
+  url: 'jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance'
+  username: 'sonar'
+  password: 'sonar'
+sonarqube::log_folder: '/var/log/sonar/logs'

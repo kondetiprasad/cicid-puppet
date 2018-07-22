@@ -1,0 +1,28 @@
+---
+classes:
+  - mysql::server
+  - pip
+  - beaver
+  - beaver::input::files
+  - beaver::output::redis_out
+ 
+beaver::status: enabled
+beaver_file:
+  "syslog":
+    file: '/var/log/*'
+    type: 'syslog'
+redis_out:
+  'redisout':
+    host: 'dev.logserver.az.a.xebia.training.com'
+    port: '6379'
+
+mysql::server::root_password: 'password'
+mysql_db:
+  "employeedb":
+    password: "test"
+    user: "test"
+    host: "%"
+
+mysql::server::override_options:
+  'mysqld':
+    bind-address: 0.0.0.0

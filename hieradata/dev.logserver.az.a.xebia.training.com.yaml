@@ -1,0 +1,7 @@
+---
+logstash::repo_version: "2.1"
+logstash::manage_repo: true
+
+
+kibana::version: '4.3.1'
+kibana::bind: '0.0.0.0'

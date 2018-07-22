@@ -1,0 +1,67 @@
+---
+classes: 
+  - sudo
+  - sudo::configs
+  - java
+  - tomcat
+  - tomcat::instances
+  - pip
+  - beaver
+  - beaver::input::files
+  - beaver::output::redis_out
+  - nginx
+  - users::user
+
+users_sysadmins:
+  root:
+    ssh_authorized_keys:
+      jenkins:
+       type: 'ssh-rsa'
+       key:  'AAAAB3NzaC1yc2EAAAADAQABAAABAQDMFutFn1IU4cmUDFmb7Z9hwkCLA4jOS15j9r3P1OEfue48tqCdEMfsSPLYVWkn//M2JgT/TZiowaxZxc9vlhSQ7h3HbeHVO4uWhtr9Oxw07sDn5gQSwgckhe19dvbFPbu/2j5RrPNYONLU/Alsd2N8NtzY7z6q2fKZ8V89IkZDSjumNfpj9O2Ryuw0qPdK1Ux8y0/+5+6D4obcDcEdPIO60PbC5CmrjGsrZEsDxMKkv+ulOWDr33edxtz1nqC6Kh1bRuyE5u2UlpAFtfw3OyMWhUEQ7/K0x0e57wZkAni4/vSsOE/4ads38Lly+Dq5V/Pvd7jDxVAaY7V4wGIbCAtT'
+nginx::nginx_upstreams:
+  'app.xebia.training.com':
+    ensure: present
+    members:
+      - 127.0.0.1:8080
+nginx::nginx_vhosts:
+  'app.training.com':
+    proxy: 'http://app.xebia.training.com'  
+nginx::nginx_locations:
+  'Spring3HibernateApp':
+    location: '/Spring3HibernateApp/'
+    vhost: 'app.training.com'
+    proxy: 'http://app.xebia.training.com'
+    
+beaver::status: enabled
+beaver_file:
+  "syslog":
+    file: '/var/log/*'
+    type: 'syslog'
+  "tomcat":
+    file: '/srv/tomcat/xebia/logs/*'
+    type: 'tomcat'
+redis_out:
+  'redisout':
+    host: 'dev.logserver.az.a.xebia.training.com'
+    port: '6379'
+
+sudo::purge: false
+sudo::config_file_replace: false
+sudo::configs:
+  'tomcat_xebia':
+    'content': "tomcat ALL=NOPASSWD:/sbin/service tomcat-xebia *"
+  'tomcat_xebia':
+    'content': "tomcat ALL=NOPASSWD:/sbin/service tomcat-xebia *"
+   
+java::distribution: "jre"
+tomcat::sources: true
+tomcat::sources_src: 'http://archive.apache.org/dist/tomcat/'
+instances:
+  "xebia":
+    ensure: "present"
+    http_port: "8080"
+    ajp_port: "8009"
+    owner: "tomcat"
+    group: "tomcat"
+    webapp_mode: "0775"
+    logs_mode: "0775"

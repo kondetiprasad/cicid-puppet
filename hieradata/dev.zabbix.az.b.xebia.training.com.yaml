@@ -1,0 +1,36 @@
+---
+classes:
+  - apache
+  - zabbix
+  - zabbix::javagateway
+  - zabbix::agent
+  - mysql::Server
+  - apache::mod::php
+  - pip
+  - beaver
+  - beaver::input::files
+  - beaver::output::redis_out
+ 
+beaver::status: enabled
+beaver_file:
+  "syslog":
+    file: '/var/log/*'
+    type: 'syslog'
+redis_out:
+  'redisout':
+    host: 'dev.logserver.az.a.xebia.training.com'
+    port: '6379'
+
+apache::mpm_module: 'prefork'
+zabbix::zabbix_version: '2.4'
+apache::default_vhost: false
+zabbix::zabbix_url: '%{::ipaddress_eth0}'
+zabbix::zabbix_server: 'monitoring.xabbix.training.com'
+zabbix::javagateway: "%{::ipaddress_eth0}"
+zabbix::zabbix_timezone: 'Asia/Kolkata'
+zabbix::javagatewayport: 10052
+zabbix::startjavapollers: 16
+zabbix::database_type: 'mysql'
+zabbix::javagateway::listenip: "0.0.0.0"
+zabbix::javagateway::startpollers: 16
+

@@ -1,0 +1,35 @@
+---
+classes:
+  - nginx
+nginx::nginx_upstreams:
+  'dev.jenkins.az.a.xebia.training.com':
+    ensure: present
+    members:
+      - dev.jenkins.az.a.xebia.training.com:8080
+  'dev.sonar.az.a.xebia.training.com':
+    ensure: present
+    members:
+      - dev.jenkins.az.a.xebia.training.com:9000
+  'dev.nexus.az.a.xebia.training.com':
+    ensure: present
+    members:
+      - dev.jenkins.az.a.xebia.training.com:8081
+  'dev.logserver.az.a.xebia.training.com':
+    ensure: present
+    members:
+      - dev.logserver.az.a.xebia.training.com:5601
+  'dev.zabbix.az.b.xebia.training.com':
+    ensure: present
+    members:
+      - dev.zabbix.az.b.xebia.training.com:80
+nginx::nginx_vhosts:
+  'jenkins.training.com':
+    proxy: 'http://dev.jenkins.az.a.xebia.training.com' 
+  'logserver.training.com':
+    proxy: 'http://dev.logserver.az.a.xebia.training.com'
+  'monitoring.training.com':
+    proxy: 'http://dev.zabbix.az.b.xebia.training.com'
+  'sonar.training.com':
+    proxy: 'http://dev.sonar.az.a.xebia.training.com'
+  'nexus.training.com':
+    proxy: 'http://dev.nexus.az.a.xebia.training.com'  
