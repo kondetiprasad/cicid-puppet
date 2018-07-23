@@ -12,5 +12,6 @@ class jenkins::package {
 
   package { $::jenkins::package_name:
     ensure => $::jenkins::version,
+    
   }
 }

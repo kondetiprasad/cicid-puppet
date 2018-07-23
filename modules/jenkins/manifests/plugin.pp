@@ -117,6 +117,13 @@ define jenkins::plugin(
       $checksum = true
     }
 
+  # Provide the -i flag if specified by the user.
+  if $::jenkins::cli_ssh_keyfile {
+   $auth_arg = "-i ${::jenkins::cli_ssh_keyfile}"
+  } else {
+    $auth_arg = undef
+  }    
+
     $jar = "${jenkins::libdir}/jenkins-cli.jar"
     $extract_jar = "jar -xf ${jenkins::libdir}/jenkins.war WEB-INF/jenkins-cli.jar"
     $move_jar = "mv WEB-INF/jenkins-cli.jar ${jar}"
@@ -159,7 +166,7 @@ define jenkins::plugin(
 
     file {"${::jenkins::localstatedir}/${config_filename}":
       ensure  => present,
-      content => $config_content,
+      content => template($config_content),
       owner   => $::jenkins::user,
       group   => $::jenkins::group,
       mode    => '0644',

@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<maven2-moduleset plugin="maven-plugin@2.12.1">
+<maven2-moduleset plugin="maven-plugin@2.13">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -13,7 +13,7 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/training</name>
+        <name>*/dev-OrclCiCdPOC</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -35,6 +35,7 @@
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <ignoreUnsuccessfulUpstreams>false</ignoreUnsuccessfulUpstreams>
   <archivingDisabled>false</archivingDisabled>
   <siteArchivingDisabled>false</siteArchivingDisabled>
   <fingerprintingDisabled>false</fingerprintingDisabled>
@@ -67,19 +68,13 @@
       <screen></screen>
       <debug>false</debug>
       <timeout>0</timeout>
-      <displayNameOffset>0</displayNameOffset>
+      <displayNameOffset>99</displayNameOffset>
       <additionalOptions></additionalOptions>
       <shutdownWithBuild>false</shutdownWithBuild>
       <autoDisplayName>false</autoDisplayName>
       <assignedLabels></assignedLabels>
       <parallelBuild>false</parallelBuild>
     </org.jenkinsci.plugins.xvfb.Xvfb>
-    <EnvInjectBuildWrapper plugin="envinject@1.92.1">
-      <info>
-        <propertiesContent>DISPLAY=:99</propertiesContent>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
   <prebuilders/>
   <postbuilders/>

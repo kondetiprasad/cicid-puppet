@@ -1,15 +1,180 @@
 ---
-classes:
-  - timezone
-  - ntp
-  - zabbix::agent
+beaver::status: enabled
+beaver_file:
+  "syslog":
+    file: '/var/log/*'
+    type: 'syslog'
+redis_out:
+  'redisout':
+    host: 'dev.logserver.az.a.xebia.training.com'
+    port: '6379'
+display::display: 99
+display::width: 1024
+display::height: 768
 
-zabbix::agent::server: "dev.zabbix.az.b.xebia.training.com"
-zabbix::agent::serveractive: "dev.zabbix.az.b.xebia.training.com"
-zabbix::agent::zabbix_version: '2.2' 
-timezone::timezone: 'Asia/Kolkata'
-ulimit::use_default_ulimits: false
-ntp::logfile: /var/log/ntp.log
-ntp::minpoll: 10
-ntp::maxpoll: 3
-ntp::iburst_enable: true
+nexus::revision: '01'
+nexus::version: '2.11.4'
+nexus::nexus_context: ""
+nexus::nexus_root:  "/opt"
+
+mysql::server::root_password: 'password'
+mysql::server::databases:
+  "employeedb":
+    ensure: 'present'
+    charset: 'utf8'
+mysql_db:
+  "sonar":
+    user: "sonar"
+    password: "sonar"
+sonarqube::version: '5.2'
+sonarqube::user: 'sonar'
+sonarqube::group: 'sonar'
+sonarqube::service: 'sonar'
+sonarqube::installroot: '/opt/'
+sonarqube::jdbc: 
+  url: 'jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance'
+  username: 'sonar'
+  password: 'sonar'
+sonarqube::log_folder: '/var/log/sonar/logs'
+
+java::distribution: "jdk"
+nexus::revision: '01'
+nexus::version: '2.11.4'
+nexus::nexus_context: ""
+nexus::nexus_root:  "/opt"
+jenkins::install_java: false
+jenkins::lts: true
+jenkins::version: '2.121.2'
+jenkins::configure_firewall: false
+jenkins::executors: 3
+#jenkins::cli_ssh_keyfile: /tmp/id_rsa
+#jenkins::cli_try_sleep: 5
+#jenkins::cli_tries: 5
+jenkins::plugin_hash:
+  'pipeline-stage-step': {}
+  'cloudbees-folder': {}
+  'structs': {}
+  'cobertura': {}
+  'junit': {}
+  'antisamy-markup-formatter': {}
+  'github-api': {}
+  'pam-auth': {}
+  'ssh-credentials': {}
+  'display-url-api': {}
+  'mailer': {}
+  'job-dsl': {}
+  'git': {}
+  'token-macro': {}
+  'git-client': {}
+  'external-monitor-job': {}
+  'icon-shim': {}
+  'github': {}
+  'matrix-auth': {}
+  'script-security': {}
+  'git-server': {}
+  'matrix-project': {}
+  'build-timeout': {}
+  'credentials': {}
+  'workflow-cps-global-lib': {}
+  'workflow-step-api': {}
+  'plain-credentials': {}
+  'credentials-binding': {}
+  'mapdb-api': {}
+  'timestamper': {}
+  'workflow-api': {}
+  'branch-api': {}
+  'workflow-basic-steps': {}
+  'resource-disposer': {}
+  'subversion': {}
+  'ws-cleanup': {}
+  'nodejs': {}
+  'ant': {}
+  'gradle': {}
+  'pipeline-input-step': {}
+  'pipeline-milestone-step': {}
+  'workflow-multibranch': {}
+  'workflow-support': {}
+  'pipeline-build-step': {}
+  'durable-task': {}
+  'jquery-detached': {}
+  'ssh-slaves': {}
+  'ace-editor': {}
+  'workflow-scm-step': {}
+  'scm-api': {}
+  'email-ext': {}
+  'workflow-cps': {}
+  'javadoc': {}
+  'workflow-job': {}
+  'pipeline-graph-analysis': {}
+  'pipeline-rest-api': {}
+  'packer': {}
+  'handlebars': {}
+  'maven-plugin': {}
+  'momentjs': {}
+  'workflow-aggregator': {}
+  'pipeline-stage-view': {}
+  'port-allocator': {}
+  'workflow-durable-task-step': {}
+  'github-branch-source': {}
+  'github-organization-folder': {}
+  'htmlpublisher': {}
+  'nested-view': {}
+  'envinject': {}
+  'run-condition': {}
+  'conditional-buildstep': {}
+  'parameterized-trigger': {}
+  'android-emulator': {}
+  'sbt': {}
+  'oauth-credentials': {}
+  'google-oauth-plugin': {}
+  'publish-over-dropbox': {}
+  'build-name-setter': {}
+  'jquery': {}
+  'git-parameter': {}
+  'configurationslicing': {}
+  'downstream-buildview': {}
+  'build-user-vars-plugin': {}
+  'build-blocker-plugin': {} 
+  'cobertura': {}
+  'htmlpublisher': {}
+  'job-dsl': {}
+  'nested-view': {}
+  'github': {}
+  'maven-plugin':
+    manage_config: true
+    config_filename: 'hudson.tasks.Maven.xml'
+    config_content: 'jenkins/config/plugin/hudson.tasks.Maven.xml.erb' 
+  'sonar':
+    manage_config: true
+    config_filename: 'hudson.plugins.sonar.SonarGlobalConfiguration.xml'
+    config_content: 'jenkins/config/plugin/hudson.plugins.sonar.SonarGlobalConfiguration.xml.erb'
+  'xvfb':
+    manage_config: true
+    config_filename: 'org.jenkinsci.plugins.xvfb.Xvfb.xml'
+    config_content: 'jenkins/config/plugin/org.jenkinsci.plugins.xvfb.Xvfb.xml.erb'
+jenkins::job_hash:
+  'CodeQuality':
+    'template': 'jenkins/config/jobs/OrclCiCdPOC_Sonar.xml.erb'
+    'config': ""
+  'Deployment':
+    'template': 'jenkins/config/jobs/OrclCiCdPOC_Deployment.xml.erb'
+    'config': ""
+  'CodeStability':
+    'template': 'jenkins/config/jobs/OrclCiCdPOC_Junit.xml.erb'
+    'config': ""
+  'Release':
+    'template': 'jenkins/config/jobs/OrclCiCdPOC_Release.xml.erb'
+    'config': ""
+  'IntegrationTest':
+    'template': 'jenkins/config/jobs/OrclCiCdPOC_Selenium.xml.erb'
+    'config': ""
+  'CodeCoverage':
+    'template': 'jenkins/config/jobs/CodeCoverage.xml.erb'
+    'config': ""
+  'META':
+    'template': 'jenkins/config/jobs/META.xml.erb'
+    'config': ""
+
+jenkins::config_hash:
+  'JENKINS_JAVA_OPTIONS':
+    value: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.CSP=\\\"sandbox allow-scripts; style-src 'unsafe-inline' *;script-src 'unsafe-inline' *;\\\""

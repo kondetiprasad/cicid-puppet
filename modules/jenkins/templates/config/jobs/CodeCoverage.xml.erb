@@ -31,7 +31,7 @@
     <artifactId>Spring3HibernateApp</artifactId>
   </rootModule>
   <rootPOM>Spring3HibernateApp/pom.xml</rootPOM>
-  <goals>clean package</goals>
+  <goals>clean install cobertura:cobertura -Dcobertura.report.format=html</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
@@ -48,22 +48,23 @@
   <settings class="jenkins.mvn.DefaultSettingsProvider"/>
   <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
   <reporters/>
-  <publishers/>
+  <publishers>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.11">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>Code Coverage HTML Report</reportName>
+          <reportDir>Spring3HibernateApp/target/site/cobertura/</reportDir>
+          <reportFiles>index.html</reportFiles>
+          <alwaysLinkToLastBuild>true</alwaysLinkToLastBuild>
+          <keepAll>true</keepAll>
+          <allowMissing>true</allowMissing>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
+  </publishers>
   <buildWrappers/>
   <prebuilders/>
-  <postbuilders>
-    <hudson.tasks.Shell>
-      <command>#!/bin/bash
-
-
-for az in a b
-do
-ssh -t -t root@dev.app.az.${az}.xebia.training.com &quot;service tomcat-xebia stop; rm -rf /srv/tomcat/xebia/webapps/*&quot;
-scp Spring3HibernateApp/target/Spring3HibernateApp.war root@dev.app.az.${az}.xebia.training.com:/srv/tomcat/xebia/webapps/Spring3HibernateApp.war
-ssh -t -t root@dev.app.az.${az}.xebia.training.com &quot;chown tomcat. /srv/tomcat/xebia/webapps/Spring3HibernateApp.war &amp;&amp; service tomcat-xebia start&quot;
-done</command>
-    </hudson.tasks.Shell>
-  </postbuilders>
+  <postbuilders/>
   <runPostStepsIfResult>
     <name>FAILURE</name>
     <ordinal>2</ordinal>

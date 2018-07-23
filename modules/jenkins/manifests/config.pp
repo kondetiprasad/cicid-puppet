@@ -35,6 +35,14 @@ class jenkins::config {
     })
   }
 
+  $configfile_params = {
+    owner  => $::jenkins::user,
+    group  => $::jenkins::group,
+    source => "puppet:///modules/jenkins/config.xml",   
+    mode   => '0644',
+  }
+
+
   ensure_resource('file', $::jenkins::localstatedir, $dir_params)
   ensure_resource('file', $::jenkins::plugin_dir, $dir_params)
   ensure_resource('file', $::jenkins::job_dir, $dir_params)

@@ -224,7 +224,7 @@ class jenkins(
 
   $plugin_dir = "${localstatedir}/plugins"
   $job_dir = "${localstatedir}/jobs"
-
+  $config_file = "${localstatedir}/config.xml"
   anchor {'jenkins::begin':}
   anchor {'jenkins::end':}
 

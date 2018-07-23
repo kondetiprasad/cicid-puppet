@@ -3,7 +3,7 @@
 # A helper script for creating resources via the Jenkins cli
 #
 class jenkins::cli_helper (
-  $ssh_keyfile = undef,
+  $ssh_keyfile = $::jenkins::cli_ssh_keyfile,
 ){
   include ::jenkins
   include ::jenkins::cli
