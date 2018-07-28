@@ -8,12 +8,12 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>git@github.com:OpsTree/ContinuousIntegration.git</url>
+        <url>git@github.com:kondetiprasad/Spring3HibernateApp.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/dev-OrclCiCdPOC</name>
+        <name>development</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -30,7 +30,7 @@
     <groupId>Spring3HibernateApp</groupId>
     <artifactId>Spring3HibernateApp</artifactId>
   </rootModule>
-  <rootPOM>Spring3HibernateApp/pom.xml</rootPOM>
+  <rootPOM>pom.xml</rootPOM>
   <goals>clean install cobertura:cobertura -Dcobertura.report.format=html</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>

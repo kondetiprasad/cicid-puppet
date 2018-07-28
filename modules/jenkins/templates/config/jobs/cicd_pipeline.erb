@@ -1,0 +1,36 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.23">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
+      <useBuildBlocker>false</useBuildBlocker>
+      <blockLevel>GLOBAL</blockLevel>
+      <scanQueueFor>DISABLED</scanQueueFor>
+      <blockingJobs></blockingJobs>
+    </hudson.plugins.buildblocker.BuildBlockerProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.54">
+    <script>node {
+stage (&apos;Code Stability&apos;) {
+    build job: &apos;CodeStability&apos;
+}
+stage (&apos;Code Qality&apos;) {
+    build job: &apos;CodeQuality&apos;
+}
+stage (&apos;Code Coverage&apos;) {
+    build job: &apos;CodeCoverage&apos;
+}
+stage (&apos;Code Integration&apos;) {
+    build job: &apos;IntegrationTest&apos;
+}
+stage (&apos;Rlease&apos;) {
+    build job: &apos;Release&apos;
+}
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
