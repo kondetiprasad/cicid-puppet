@@ -1,55 +1,31 @@
 # == Class: tomcat::install
 #
-# install tomcat and logging stuff
+# This class is a wrapper to install tomcat either from packages or archive
 #
 class tomcat::install {
-
-  $package_name = $::osfamily ? {
-    'redhat' => $::operatingsystemmajrelease ? {
-      '7'     => 'tomcat',
-      default => "tomcat${tomcat::version}",
-    },
-    'debian' => "tomcat${tomcat::version}",
+  # The base class must be included first
+  if !defined(Class['tomcat']) {
+    fail('You must include the tomcat base class before using any tomcat sub class')
   }
 
-  $service_name = $::osfamily ? {
-    'RedHat' => $::operatingsystemmajrelease ? {
-      '7'     => 'tomcat',
-      default => "tomcat${tomcat::version}",
-    },
-    'Debian' => "tomcat${tomcat::version}",
+  case $::tomcat::install_from {
+    'package' : { contain tomcat::install::package }
+    default   : { contain tomcat::install::archive }
   }
 
-  if !$tomcat::sources {
-    package {'tomcat':
+  # tomcat native library
+  if $::tomcat::tomcat_native {
+    package { 'tomcat native library':
       ensure => present,
-      name   => $package_name,
-    } ->
-    # Ensure default service is stopped
-    service { 'tomcat':
-      ensure => stopped,
-      name   => $service_name,
-      enable => false,
+      name   => $::tomcat::tomcat_native_package_name
     }
+  }
 
-    if $::osfamily != 'RedHat' or versioncmp($::operatingsystemmajrelease, '7') != 0 {
-      Package['tomcat'] ->
-      class {'::tomcat::juli': } ->
-      class {'::tomcat::logging': }
-
-      if $::osfamily == 'RedHat' {
-        class {'::tomcat::install::redhat': }
-      }
-
-      # Set the init script unexecutable
-      file {"/etc/init.d/tomcat${tomcat::version}":
-        ensure  => file,
-        mode    => '0644',
-        require => Service['tomcat'],
-      }
+  # log4j library
+  if $::tomcat::log4j {
+    package { 'tomcat log4j library':
+      ensure => present,
+      name   => $::tomcat::log4j_package_name
     }
-
-  } else {
-    class {'::tomcat::source': }
   }
 }

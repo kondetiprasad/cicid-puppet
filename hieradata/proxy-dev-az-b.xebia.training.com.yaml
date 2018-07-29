@@ -13,7 +13,7 @@ nginx::nginx_upstreams:
   'nexus-dev-az-a.demo.training.com':
     ensure: present
     members:
-      - jenkins-dev-az.a.demo.training.com:8081
+      - jenkins-dev-az-a.demo.training.com:8081
   'app-dev-az-a.demo.training.com':
     ensure: present
     members:

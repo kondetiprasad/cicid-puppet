@@ -1,126 +1,325 @@
-## 2015-06-30 - Release 0.13.8
+###1.7.0
 
-Fix unit tests
+* Add support for Tomcat 9
+ - Configurable nested UpgradeProtocol, SSLHostConfig and Certificate elements (Connector)
+ - Configurable nested CredentialHandler element (Realm)
+ - *Refer to the configuration examples for further usage instructions*
+* Make the VersionLogger Listener attributes configurable via `versionlogger_*` parameters
+* Make the JreMemoryLeakPrevention Listener attributes configurable via `jrememleak_attrs` parameter
+* New parameter `jmx_uselocalports` for the JMX Listener
+* **Warning:** the path to Tomcat archives is now composed of both `archive_source` and `archive_filename` (new) parameters
+* Fix ignored `listeners` parameter
 
-## 2015-06-26 - Release 0.13.7
+###1.6.2
 
-Fix strict_variables activation with rspec-puppet 2.2
+* Add proxy support via new parameters `proxy_server` and `proxy_type`
+* New parameter `force_init` which generates a generic init script/unit for packages which do not include any
+* Add support for SuSE 12.1
+* Update default package versions
 
-## 2015-05-28 - Release 0.13.6
+###1.6.1
 
-Add beaker_spec_helper to Gemfile
+* Unset `provider` parameter on all `archive` resources (from `puppet-archive` module)
+ - quick and dirty workaround until [SERVER-94](https://tickets.puppetlabs.com/browse/SERVER-94) gets fixed
+ - **Warning:** may break behind a HTTP proxy (untested)
 
-## 2015-05-27 - Release 0.13.5
+###1.6.0
 
-Fix unscoped variable in template
+* Configurable `web.xml` files
+ - **Warning:** replaces `default_servlet` instance parameter
+ - New `tomcat::web` defined type to manage `web.xml` files
+ - See `default_servlet*`, `jsp_servlet*`, `sessionconfig_sessiontimeout` and `welcome_file_list` parameters
+* Update systemd unit, expect tomcat script path as set in latest available packages
+ - **Warning:** check the current location of your tomcat startup script, especially if using an old OS package version
+* Replace or remove calls to deprecated `validate_*` stdlib functions
+* Add support for Fedora 25 and Amazon Linux 2016.09
+* Drop support for Fedora 22
 
-## 2015-05-26 - Release 0.13.4
+###1.5.0
 
-Use random application order in nodeset
+**Warning:** the `host_deployOnStartup` parameter was renamed to `host_deployonstartup` (lowercase) in this release. Backward compatibility will be maintained until the next minor release only.
 
-## 2015-05-26 - Release 0.13.3
+* New `tomcat::userdb_role_entry` defined type to manage roles in the user database ([hdeadman](https://github.com/hdeadman))
+* New `tomcat_users` and `tomcat_roles` hash parameters to help the definition of users and roles ([hdeadman](https://github.com/hdeadman))
+* Add support for Engine scoped valves: `engine_valves` parameter ([hdeadman](https://github.com/hdeadman))
+* New parameters `restart_on_change` and `file_mode` ([ruriky](https://github.com/ruriky))
+* Allow enabling the Security Manager on `archive` installations ([hdeadman](https://github.com/hdeadman))
+* Fix default systemd service type on `archive` installations ([hdeadman](https://github.com/hdeadman))
+* Improve usage of clustering features (SimpleTcpCluster) ([hdeadman](https://github.com/hdeadman))
+ - see undocumented `cluster_*` parameters
+* Fix empty user/group in systemd units
+* Encode values in XML templates ([scitechfh](https://github.com/scitechfh))
+* Set default provider to `curl` for `archive` resources ([scitechfh](https://github.com/scitechfh))
+* Add support for Ubuntu 16.10 (Yakkety), OpenSuSE 42.2, SuSE 12.1
+* Update default package versions
 
-add utopic & vivid nodesets
+###1.4.0
 
-## 2015-05-25 - Release 0.13.2
+**Warning:** the `enable_extras` parameter was renamed to `extras_enable` in this release. Backward compatibility will be maintained until the next minor release only.
 
-Don't allow failure on Puppet 4
+* New parameters: `package_ensure` and `extras_package_name` ([scitechfh](https://github.com/scitechfh))
+* New parameters: `checksum_verify`, `checksum_type`, `checksum` and `extras_source` ([angrox](https://github.com/angrox))
+* Replace dependency on `puppet/staging` by `puppet/archive`
+* Align content of systemd templates on current state of official RPM packages (RedHat and derivatives)
+* Add support for Ubuntu 16.04 (Xenial), Fedora 24 and Amazon Linux 2016.03
+* Drop support for Debian 6 (Squeeze), OpenSuSE 13.1 and below, Fedora 21 and below
+* Update default package versions
+* Bug fixes:
+ - parameters left blank in systemd units on some Puppet versions
+ - work around for [PUP-1597](https://tickets.puppetlabs.com/browse/PUP-3615) on RHEL 7
+ - dependency cycle between service and context resources
+ - file permissions too strict on configuration files
+ - activation of extras/log4j not working with multi-version setups
+ - tomcat service not notified of all relevant changes
 
-## 2015-05-19 - Release 0.13.1
+###1.3.2
 
-Fix when using a server_xml_file
+* New parameters: `globalnaming_environments` and `ssl_sslenabledprotocols` ([roysjosh](https://github.com/roysjosh))
+* Support Amazon Linux 2015.x ([thkrmr](https://github.com/thkrmr))
+* Update default package versions (Fedora 23)
 
-## 2015-05-19 - Release 0.13.0
+###1.3.1
 
-Use puppetlabs-concat instead of theforeman-concat_native
+* New `systemd_service_type` parameter ([joshuabaird](https://github.com/joshuabaird))
+* Reload systemd daemon after unit update ([scitechfh](https://github.com/scitechfh))
+* Update deprecated `port` firewall parameter ([scitechfh](https://github.com/scitechfh))
+* Support Fedora 23
 
-## 2015-05-18 - Release 0.12.0
+###1.3.0
 
-Add dynamic dependency between install and service
+* Support per-instance user
+* New `tomcat::instance` parameter: `default_servlet`
+* Fix default owner/group on context.xml
+* Contain sub-classes
+* Update default package versions (Debian 6/7)
+* Support Ubuntu 15.10
 
-## 2015-05-15 - Release 0.11.2
+###1.2.1
 
-Fix missing ownerships
-Internal refactoring
+* Fix obsolete start/stop commands and systemd unit on RHEL7
+* Support Epoch tag in package version
+* Move information about tomcat user/group to the right place in the documentation
+* Update default package versions (RHEL6/7)
 
-## 2015-05-13 - Release 0.11.1
+###1.2.0
 
-Add puppet-lint-file_source_rights-check gem
+Enforce tomcat package version. `version` now takes a full package version when tomcat is installed from a package repository.
 
-## 2015-05-13 - Release 0.11.0
+###1.1.0
 
-Remove experimental implementation
+New `tomcat::context` defined type to manage `context.xml` files
 
-## 2015-05-12 - Release 0.10.5
+###1.0.3
 
-Don't pin beaker
+Fix regression due to changes in pid file management
 
-## 2015-04-27 - Release 0.10.4
+###1.0.2
 
-Add nodeset ubuntu-12.04-x86_64-openstack
+* Add missing `ensure` attributes ([hanej](https://github.com/hanej))
+* Do not force pid file creation (fixes startup issue with Tomcat 6)
 
-## 2015-04-15 - Release 0.10.3
+###1.0.1
 
-Use file() function instead of fileserver (much faster)
-Fix for concat_native 1.4+
-Requires concat_native 1.4+
+Fix documentation format and add Context config example
 
-## 2015-04-14 - Release 0.10.2
+###1.0.0
 
-add a parameter catalina_base_mode that sets rights on catalina_base
+* New Context parameters for configuring context.xml:
+ - `context_params`
+ - `context_loader`
+ - `context_manager`
+ - `context_realm`
+ - `context_resources`
+ - `context_parameters`
+ - `context_environments`
+ - `context_listeners`
+ - `context_valves`
+ - `context_resourcedefs`
+ - `context_resourcelinks`
+* Support Debian 8, Fedora 22 and RHEL 5
+* Do not create user/group if already defined
+* Minor bugfixes
 
-## 2015-04-10 - Release 0.10.1
+###0.9.3
 
-Fix init script when overriding JAVA_HOME in setenv-local.sh
+* Allow several instances to use the same `log_path`
+* Parameters validation
+* Partial spec tests
 
-## 2015-04-03 - Release 0.10.0
+###0.9.2
 
-Add Debian 8 support
-Add acceptance tests for debian6 and centos6 to travis matrix
-Remove RedHat 5 support (may still work but untested)
+* Enable multi-version tomcat installation
+* New parameter `log_path`: define log directory
+* Fix issue with generic init script always returning 0
 
-## 2015-03-24 - Release 0.9.0
+###0.9.1
 
-Support Debian Jessie (with tomcat7)
-Add acceptance tests on Travis CI
+Fix compatibility with future parser in Puppet 3.7.4 ([PUP-3615](https://tickets.puppetlabs.com/browse/PUP-3615))
 
-## 2015-03-24 - Release 0.8.10
+###0.9.0
 
-Update Gemfile
+**Warning:** this release is a big step forward, please read the documentation carefully
 
-## 2015-03-13 - Release 0.8.9
+* New `listeners` parameters: create custom Listener components within the server configuration
+* New Server parameters. Warning: `control_port` renamed to `server_control_port`
+ - `server_control_port`
+ - `server_shutdown`
+ - `server_address`
+* New Service parameters.
+ - `svc_name`
+ - `svc_params`
+* New Engine parameters. Warning: `jvmroute` renamed to `engine_jvmroute`
+ - `engine_name`
+ - `engine_defaulthost`
+ - `engine_jvmroute`
+ - `engine_params`
+* New Host parameters. Warning: **all** old parameters renamed and default values removed!
+ - `host_name`
+ - `host_appbase`
+ - `host_autodeploy`
+ - `host_deployOnStartup`
+ - `host_undeployoldversions`
+ - `host_unpackwars`
+ - `host_params`
+* Fix instance startup on Fedora 20+, drop support for Fedora 15 and 16
+* `custom_fragment` renamed to `custom_variables` (hash)
+* Refactoring
 
-Fix a bug with systemd service file
+###0.8.2
 
-## 2015-03-11 - Release 0.8.8
+* New parameters related to Executors
+ - `threadpool_name`
+ - `threadpool_nameprefix`
+ - `threadpool_maxthreads`
+ - `threadpool_minsparethreads`
+ - `threadpool_params`
+ - `executors`
 
-Fix: Tomcat::Connector should refresh Service
+###0.8.1
 
-## 2015-02-19 - Release 0.8.7
+* Fix Critical messages generated when concaneting empty fragments to server.xml
+* New parameter `valves`: create custom Valve components within the server configuration
+* Change default value for `catalina_pid` (instance context) and manage pid file
+* Improve template formatting
 
-Fix for future parser
+###0.8.0
 
-## 2015-02-18 - Release 0.8.6
+* Numerous new Connector parameters (see documentation, thanks [etlweather](https://github.com/etlweather) for the help)
+* Split bulky server.xml template into independant fragments
+* New `context_resources` parameter: add ResourceLink elements to context.xml ([etlweather](https://github.com/etlweather))
+* Added basic support for SimpleTcpCluster ([etlweather](https://github.com/etlweather), experimental and undocumented, need contributions)
+* Updated documentation
 
-Revert fix
+###0.7.0
 
-## 2015-02-18 - Release 0.8.5
+* New realm parameters: `$lockout_realm`, `$userdatabase_realm` ([etlweather](https://github.com/etlweather))
+* New `globalnaming_resources` and `realms` parameters: possibility to define custom GlobalNamingResources and Realm elements ([etlweather](https://github.com/etlweather))
+* Changed `root_path` default value (instance context)
+* Proper startup script for distributions without systemd
+* Better support of SuSE OS family
+* Fix tomcat6 startup script on RHEL (warning: now requires stdlib >= 4.4.0)
 
-Fix future parser issue
+###0.6.0
 
-## 2015-01-29 - Release 0.8.4
+* Compatible with future parser
+* Minor code improvements
 
-Don't use fakeroot for unit tests
-Fix future parser issues
-Use absolute names in class inclusions
-Use undef instead of empty strings
+###0.5.4
 
-## 2015-01-07 - Release 0.8.3
+Fix [compatibility issue](https://tickets.puppetlabs.com/browse/PUP-1597) with Puppet versions between 3.4 and 3.6
 
-Fix unquoted strings in cases
+###0.5.3
 
-## 2015-01-05 - Release 0.8.2
+Removed `root_path` parameter from main class (redundant with `catalina_home`)
 
-Add CHANGELOG.md
-Fix license name in metadata.json
-Simplify bundler cache in Travis CI
+###0.5.2
+
+* `installation_support` renamed to `install_from`
+* New debugging parameters: `jpda_enable`, `jpda_transport`, `jpda_address`, `jpda_suspend` and `jpda_opts`
+
+###0.5.1
+
+* `tomcat_user` defaults to `service_name` if installed from package
+* Log name in Access Log valve now matches `hostname`
+* Fixed log folder permissions
+
+###0.5.0
+
+* Support SuSE OS family
+* Configures instance admin webapps properly when installed from archive
+* Does not uninstall unrequired libraries anymore (native, log4j)
+* Improve warning logging
+* Cleanup
+
+###0.4.1
+
+* Document missing parameter `installation_support`
+* Improve documentation
+
+###0.4.0
+
+* Support installation from archive
+* Use `nanliu/staging` instead of `nanliu/archive` to download and extract files
+* Improved systemd support
+* `create_default_admin` defaults to `false`
+* Numerous improvements in code and documentation
+
+###0.3.2
+
+New parameter `manage_firewall`
+
+###0.3.1
+
+* `java_opts` and `catalina_opts` are now array parameters
+* Path to "setenv" file can be set using `config_path`
+* `extras` renamed to `enable_extras`
+* `tomcat_native` and `log4j` default to false
+
+###0.3.0
+
+**Warning:** this release is a big step forward, please read the documentation carefully
+
+* New type `tomcat::instance`, allows creation of individual instances
+* Old `log4j` parameter now split between `log4j` (package) and `log4j_enable` (conf)
+* New parameters `apr_listener`, `apr_sslengine`
+* Removed parameters `logfile_days` and `logfile_compress`
+* Reorganized files and templates
+* Fixed broken init script (service status check)
+* Use `nanliu/archive` module to download extra libraries
+
+###0.2.1
+
+* New parameters `logfile_days` and `logfile_compress`
+* Added log rotation
+* `catalina_base` defaults to `catalina_home` on RedHat (inverted the logic)
+* merged Debian and RedHat main configuration files
+
+###0.2.0
+
+* New parameter `jmx_bind_address`
+* `catalina_home` now defaults to `catalina_base` on RedHat
+* Removed `defaulthost` parameter
+* Minor improvements in code quality, documentation and metadata 
+
+###0.1.0
+
+* Support Debian/Ubuntu
+* Renamed `enable_manager` parameter to `admin_webapps`
+* New parameters `admin_webapps_package_name` and `log4j_package_name`
+
+###0.0.4
+
+Stop managing tomcat user, RPMs already take care of it
+
+###0.0.3
+
+* The package name for Tomcat native library can now be set
+* Notify tomcat service when a package resource is modified
+
+###0.0.2
+
+Fixed a bug with 'extras' libraries get path
+
+###0.0.1
+
+First forge release
