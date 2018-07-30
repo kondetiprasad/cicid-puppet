@@ -22,11 +22,12 @@ stage (&apos;Code Qality&apos;) {
 stage (&apos;Code Coverage&apos;) {
     build job: &apos;CodeCoverage&apos;
 }
-stage (&apos;Code Integration&apos;) {
-    build job: &apos;IntegrationTest&apos;
-}
+
 stage (&apos;Rlease&apos;) {
     build job: &apos;Release&apos;
+}
+stage (&apos;Deployment&apos;) {
+    build job: &apos;Deployment&apos;
 }
 }</script>
     <sandbox>true</sandbox>

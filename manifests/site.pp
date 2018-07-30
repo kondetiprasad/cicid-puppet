@@ -35,6 +35,7 @@ node "jenkins-dev-az-a.demo.training.com" {
 	class { 'mysql::server': }
 	class { 'mysql::dbs': }
 	class { 'sonarqube': }
+        class { 'nexus': }
 }
 
 node "logserver-dev-az-a.demo.training.com" {
