@@ -1,6 +1,4 @@
 define users::ssh_authorized_keys($user, $hash) {
- 
-    if(!defined(Ssh_authorized_keys[$user])) {
 	ssh_authorized_key { "${user}-${name}" :
 	    ensure   => $hash[$name]['ensure'],
 	    key      => $hash[$name]['key'],
@@ -10,6 +8,5 @@ define users::ssh_authorized_keys($user, $hash) {
 	    type     => $hash[$name]['type'],
 	    user     => $user,
 	}
-    }
-
 }
+

@@ -32,10 +32,6 @@ node "jenkins-dev-az-a.demo.training.com" {
 	class {'timezone':}
 	class { 'ntp':}
 	class { 'zabbix::agent': }
-	class { 'pip': }
-	class { 'beaver': }
-	class { 'beaver::input::files': }
-	class { 'beaver::output::redis_out': }
 	class { 'mysql::server': }
 	class { 'mysql::dbs': }
 	class { 'sonarqube': }

@@ -40,23 +40,9 @@ define users::setup($hash) {
 				hash => $_sshkey,
 				user => $name,
 		    }
-		 notify { "testing": }
 		} else {
 		    notify { "user ssh key data for ${name} must be in hash form": }
 		}
 	    }
-	} else {	
-	    if($hash[$name]['ssh_authorized_keys']) {
-                $_sshkey = $hash[$name]['ssh_authorized_keys']
-                if(is_hash($_sshkey)) {
-                    $_sshkeys = keys($_sshkey)
-                    users::ssh_authorized_keys {
-                        $_sshkeys:
-                                hash => $_sshkey,
-                                user => $name,
-                    }
-                 notify { "testing": }
-                }
-		}
 	}
 }

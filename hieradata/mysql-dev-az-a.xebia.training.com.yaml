@@ -2,21 +2,7 @@
 classes:
   - mysql::server
   - mysql::dbs
-  - pip
-  - beaver
-  - beaver::input::files
-  - beaver::output::redis_out
  
-beaver::status: enabled
-beaver_file:
-  "syslog":
-    file: '/var/log/*'
-    type: 'syslog'
-redis_out:
-  'redisout':
-    host: 'dev.logserver.az.a.xebia.training.com'
-    port: '6379'
-
 mysql::server::root_password: 'password'
 mysql::server::service_name: 'mysqld'
 mysql::server::package_name: 'mysql-server'

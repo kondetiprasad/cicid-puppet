@@ -6,23 +6,9 @@ classes:
   - zabbix::agent
   - mysql::Server
   - apache::mod::php
-  - pip
-  - beaver
-  - beaver::input::files
-  - beaver::output::redis_out
- 
-beaver::status: enabled
-beaver_file:
-  "syslog":
-    file: '/var/log/*'
-    type: 'syslog'
-redis_out:
-  'redisout':
-    host: 'dev.logserver.az.a.xebia.training.com'
-    port: '6379'
 
 apache::mpm_module: 'prefork'
-zabbix::zabbix_version: '2.4'
+zabbix::zabbix_version: '3.2'
 apache::default_vhost: false
 zabbix::zabbix_url: '%{::ipaddress_eth0}'
 zabbix::zabbix_server: 'monitoring.xabbix.training.com'
