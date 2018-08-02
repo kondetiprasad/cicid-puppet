@@ -1,10 +1,17 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<maven2-moduleset plugin="maven-plugin@2.13">
+<?xml version='1.1' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@3.1.2">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.0">
+  <properties>
+    <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
+      <useBuildBlocker>false</useBuildBlocker>
+      <blockLevel>GLOBAL</blockLevel>
+      <scanQueueFor>DISABLED</scanQueueFor>
+      <blockingJobs></blockingJobs>
+    </hudson.plugins.buildblocker.BuildBlockerProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -30,7 +37,6 @@
     <groupId>Spring3HibernateApp</groupId>
     <artifactId>Spring3HibernateApp</artifactId>
   </rootModule>
-  <rootPOM>pom.xml</rootPOM>
   <goals>clean package</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
@@ -58,9 +64,9 @@
 
 for az in a b
 do
-ssh -t -t root@dev.app.az.${az}.xebia.training.com &quot;service tomcat-xebia stop; rm -rf /srv/tomcat/xebia/webapps/*&quot;
-scp Spring3HibernateApp/target/Spring3HibernateApp.war root@dev.app.az.${az}.xebia.training.com:/srv/tomcat/xebia/webapps/Spring3HibernateApp.war
-ssh -t -t root@dev.app.az.${az}.xebia.training.com &quot;chown tomcat. /srv/tomcat/xebia/webapps/Spring3HibernateApp.war &amp;&amp; service tomcat-xebia start&quot;
+ssh -t -t root@app-dev-az-${az}.demo.training.com &quot;service tomcat-demo stop; rm -rf /srv/tomcat/demo/webapps/*&quot;
+scp target/Spring3HibernateApp.war root@app-dev-az-${az}.demo.training.com:/srv/tomcat/demo/webapps/Spring3HibernateApp.war
+ssh -t -t root@app-dev-az-${az}.demo.training.com &quot;chown tomcat. /srv/tomcat/demo/webapps/Spring3HibernateApp.war &amp;&amp; service tomcat-demo start&quot;
 done</command>
     </hudson.tasks.Shell>
   </postbuilders>
