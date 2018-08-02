@@ -2,7 +2,6 @@
 classes:
   - apache
   - zabbix
-  - zabbix::javagateway
   - zabbix::agent
   - mysql::Server
   - apache::mod::php
@@ -31,7 +30,7 @@ elasticsearch::instances:
       'network.host': '0.0.0.0'
 
 apache::mpm_module: 'prefork'
-zabbix::zabbix_version: '3.2'
+zabbix::zabbix_version: '3.0'
 apache::default_vhost: false
 zabbix::zabbix_url: '%{::ipaddress_eth0}'
 zabbix::zabbix_server: 'monitoring.xabbix.training.com'
