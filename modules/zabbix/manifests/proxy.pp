@@ -177,6 +177,9 @@
 # [*historycachesize*]
 #   Size of history cache, in bytes.
 #
+# [*historyindexcachesize*]
+#   Size of history index cache, in bytes.
+#
 # [*historytextcachesize*]
 #   Size of text history cache, in bytes.
 #
@@ -383,6 +386,7 @@ class zabbix::proxy (
   $cachesize               = $zabbix::params::proxy_cachesize,
   $startdbsyncers          = $zabbix::params::proxy_startdbsyncers,
   $historycachesize        = $zabbix::params::proxy_historycachesize,
+  $historyindexcachesize   = $zabbix::params::proxy_historyindexcachesize,
   $historytextcachesize    = $zabbix::params::proxy_historytextcachesize,
   $timeout                 = $zabbix::params::proxy_timeout,
   $tlsaccept               = $zabbix::params::proxy_tlsaccept,
@@ -420,9 +424,8 @@ class zabbix::proxy (
   # can find the ipaddress of this specific interface if listenip
   # is set to for example "eth1" or "bond0.73".
   if ($listenip != undef) {
-    if ($listenip =~ /^(eth|bond|lxc|eno|tap|tun).*/) {
-      $int_name  = "ipaddress_${listenip}"
-      $listen_ip = inline_template('<%= scope.lookupvar(int_name) %>')
+    if ($listenip =~ /^(eth|lo|bond|lxc|eno|tap|tun).*/) {
+      $listen_ip = getvar("::ipaddress_${listenip}")
     } elsif is_ip_address($listenip) {
       $listen_ip = $listenip
     } else {
@@ -514,15 +517,22 @@ class zabbix::proxy (
         package { 'zabbix-proxy':
           ensure  => $zabbix_package_state,
           require => Package["zabbix-proxy-${db}"],
+          tag     => 'zabbix',
         }
       }
 
       # Installing the packages
-      package { "zabbix-proxy-${db}": ensure => $zabbix_package_state, }
+      package { "zabbix-proxy-${db}":
+        ensure => $zabbix_package_state,
+        tag    => 'zabbix',
+      }
     } # END 'redhat','centos','oraclelinux'
     default : {
       # Installing the packages
-      package { "zabbix-proxy-${db}": ensure => $zabbix_package_state, }
+      package { "zabbix-proxy-${db}":
+        ensure => $zabbix_package_state,
+        tag    => 'zabbix',
+      }
     } # END default
   } # END case $::operatingsystem
 
@@ -595,4 +605,13 @@ class zabbix::proxy (
         'ESTABLISHED'],
     }
   }
+
+  # check if selinux is active and allow zabbix
+  if $::osfamily == 'RedHat' and $::selinux_config_mode == 'enforcing' {
+    selboolean{'zabbix_can_network':
+      persistent => true,
+      value      => 'on',
+    }
+  }
+
 }

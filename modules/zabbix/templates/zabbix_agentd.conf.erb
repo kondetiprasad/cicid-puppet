@@ -17,7 +17,7 @@ PidFile=<%= @pidfile %>
 #		file    - file specified with LogFile parameter
 #		console - standard output
 #
-<% if @logtype %>#LogType=<%= @logtype %><% end %>
+<% if @logtype %>LogType=<%= @logtype %><% end %>
 
 ### Option: LogFile
 #	Log file name for LogType 'file' parameter.
@@ -241,7 +241,7 @@ LoadModulePath=<%= @loadmodulepath %>
 #
 <% if @loadmodule %>LoadModule=<%= @loadmodule %><% end %>
 
-<% if @zabbix_version == '3.0' %>
+<% if @zabbix_version.to_f >= 3.0 %>
 ####### TLS-RELATED PARAMETERS #######
 
 ### Option: TLSConnect

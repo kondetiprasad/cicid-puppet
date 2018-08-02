@@ -1,4 +1,3 @@
-# encoding: utf-8
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'zabbix'))
 Puppet::Type.type(:zabbix_host).provide(:ruby, parent: Puppet::Provider::Zabbix) do
   def create
@@ -38,7 +37,7 @@ Puppet::Type.type(:zabbix_host).provide(:ruby, parent: Puppet::Provider::Zabbix)
     use_ip = use_ip ? 1 : 0
 
     # When using DNS you still have to send a value for ip
-    ipaddress = '' if ipaddress.nil? && use_ip == 0
+    ipaddress = '' if ipaddress.nil? && use_ip.zero?
 
     hostgroup_create = hostgroup_create ? 1 : 0
 
@@ -47,7 +46,7 @@ Puppet::Type.type(:zabbix_host).provide(:ruby, parent: Puppet::Provider::Zabbix)
     if search_hostgroup.nil? && hostgroup_create == 1
       zbx.hostgroups.create(name: hostgroup)
       search_hostgroup = zbx.hostgroups.get_id(name: hostgroup)
-    elsif search_hostgroup.nil? && hostgroup_create == 0
+    elsif search_hostgroup.nil? && hostgroup_create.zero?
       raise Puppet::Error, 'The hostgroup (' + hostgroup + ') does not exist in zabbix. Please use the correct one.'
     end
 
@@ -70,12 +69,11 @@ Puppet::Type.type(:zabbix_host).provide(:ruby, parent: Puppet::Provider::Zabbix)
 
     zbx.templates.mass_add(hosts_id: [hostid], templates_id: template_array)
 
-    if proxy != ''
-      zbx.hosts.update(
-        hostid: zbx.hosts.get_id(host: host),
-        proxy_hostid: zbx.proxies.get_id(host: proxy)
-      )
-    end
+    return if proxy.nil? || proxy.empty?
+    zbx.hosts.update(
+      hostid: zbx.hosts.get_id(host: host),
+      proxy_hostid: zbx.proxies.get_id(host: proxy)
+    )
   end
 
   def exists?

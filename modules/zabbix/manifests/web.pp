@@ -213,6 +213,12 @@ class zabbix::web (
   $ldap_clientkey                           = $zabbix::params::ldap_clientkey,
   $puppetgem                                = $zabbix::params::puppetgem,
 ) inherits zabbix::params {
+
+  # check osfamily, Arch is currently not supported for web
+  if $::osfamily == 'Archlinux' {
+    fail('Archlinux is currently not supported for zabbix::web ')
+  }
+
   $apache_user = getvar('::apache::user')
   $apache_group = getvar('::apache::group')
 
@@ -291,7 +297,31 @@ class zabbix::web (
           $zabbix_web_package = 'zabbix-frontend-php'
         }
       }
-      package { "php5-${db}":
+
+      # Check OS release for proper prefix
+      case $::operatingsystem {
+        'Ubuntu' : {
+          if versioncmp($::operatingsystemmajrelease, '16.04') >= 0 {
+            $php_db_package = "php-${db}"
+          }
+          else {
+            $php_db_package = "php5-${db}"
+          }
+        }
+        'Debian' : {
+          if versioncmp($::operatingsystemmajrelease, '9') >= 0 {
+            $php_db_package = "php-${db}"
+          }
+          else {
+            $php_db_package = "php5-${db}"
+          }
+        }
+        default : {
+          $php_db_package = "php5-${db}"
+        }
+      }
+
+      package { $php_db_package:
         ensure => $zabbix_package_state,
         before => [
           Package[$zabbix_web_package],
@@ -306,6 +336,7 @@ class zabbix::web (
         ensure  => $zabbix_package_state,
         before  => Package[$zabbix_web_package],
         require => Class['zabbix::repo'],
+        tag     => 'zabbix',
       }
     }
   } # END case $::operatingsystem
@@ -322,6 +353,7 @@ class zabbix::web (
     ensure  => $zabbix_package_state,
     before  => File['/etc/zabbix/web/zabbix.conf.php'],
     require => Class['zabbix::repo'],
+    tag     => 'zabbix',
   }
 
   # Webinterface config file
@@ -426,7 +458,7 @@ class zabbix::web (
   } # END if $manage_vhost
 
   # check if selinux is active and allow zabbix
-  if $::selinux_config_mode == 'enforcing' {
+  if $::osfamily == 'RedHat' and $::selinux_config_mode == 'enforcing' {
     selboolean{'httpd_can_connect_zabbix':
       persistent => true,
       value      => 'on',

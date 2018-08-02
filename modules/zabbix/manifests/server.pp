@@ -32,6 +32,11 @@
 # [*manage_firewall*]
 #   When true, it will create iptables rules.
 #
+# [*manage_service*]
+#   When true, it will ensure service running and enabled.
+#   When false, it does not care about service
+#   Default: true
+#
 # [*server_configfile_path*]
 #   Server config file path defaults to /etc/zabbix/zabbix_server.conf
 #
@@ -154,6 +159,9 @@
 #
 # [*historycachesize*]
 #   Size of history cache, in bytes.
+#
+# [*historyindexcachesize*]
+#   Size of history index cache, in bytes.
 #
 # [*trendcachesize*]
 #   Size of trend cache, in bytes.
@@ -286,6 +294,7 @@ class zabbix::server (
   $manage_firewall         = $zabbix::params::manage_firewall,
   $manage_repo             = $zabbix::params::manage_repo,
   $manage_database         = $zabbix::params::manage_database,
+  $manage_service          = $zabbix::params::manage_service,
   $server_configfile_path  = $zabbix::params::server_configfile_path,
   $server_config_owner     = $zabbix::params::server_config_owner,
   $server_config_group     = $zabbix::params::server_config_group,
@@ -331,6 +340,7 @@ class zabbix::server (
   $cacheupdatefrequency    = $zabbix::params::server_cacheupdatefrequency,
   $startdbsyncers          = $zabbix::params::server_startdbsyncers,
   $historycachesize        = $zabbix::params::server_historycachesize,
+  $historyindexcachesize   = $zabbix::params::server_historyindexcachesize,
   $trendcachesize          = $zabbix::params::server_trendcachesize,
   $historytextcachesize    = $zabbix::params::server_historytextcachesize,
   $valuecachesize          = $zabbix::params::server_valuecachesize,
@@ -421,11 +431,27 @@ class zabbix::server (
   package { "zabbix-server-${db}":
     ensure  => $zabbix_package_state,
     require => Class['zabbix::repo'],
+    tag     => 'zabbix',
+  }
+
+  # Ensure that the correct config file is used.
+  zabbix::startup {'zabbix-server':
+    pidfile                => $pidfile,
+    database_type          => $database_type,
+    server_configfile_path => $server_configfile_path,
+    require                => Package["zabbix-server-${db}"],
+  }
+
+  if $server_configfile_path != '/etc/zabbix/zabbix_server.conf' {
+    file { '/etc/zabbix/zabbix_server.conf':
+      ensure  => absent,
+      require => Package["zabbix-server-${db}"],
+    }
   }
 
   # Workaround for: The redhat provider can not handle attribute enable
   # This is only happening when using an redhat family version 5.x.
-  if $::osfamily == 'redhat' and $::operatingsystemrelease !~ /^5.*/ {
+  if $::osfamily == 'redhat' and $::operatingsystemrelease !~ /^5.*/ and $manage_service {
     Service[$server_service_name] {
       enable => true }
   }
@@ -461,15 +487,18 @@ class zabbix::server (
         ],
     }
   } else {
-    service { $server_service_name:
-      ensure     => running,
-      hasstatus  => true,
-      hasrestart => true,
-      require    => [
-        Package["zabbix-server-${db}"],
-        File[$include_dir],
-        File[$server_configfile_path],
-        ],
+    if $manage_service {
+      service { $server_service_name:
+        ensure     => running,
+        hasstatus  => true,
+        hasrestart => true,
+        require    => [
+          Package["zabbix-server-${db}"],
+          File[$include_dir],
+          File[$server_configfile_path],
+          ],
+        subscribe  => File[$server_configfile_path],
+      }
     }
   }
 
@@ -479,7 +508,6 @@ class zabbix::server (
     owner   => $server_config_owner,
     group   => $server_config_group,
     mode    => '0640',
-    notify  => Service[$server_service_name],
     require => Package["zabbix-server-${db}"],
     replace => true,
     content => template('zabbix/zabbix_server.conf.erb'),

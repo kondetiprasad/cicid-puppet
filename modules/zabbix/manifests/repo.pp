@@ -50,11 +50,6 @@ class zabbix::repo (
       }
     }
 
-    case $::operatingsystemrelease {
-      /\/sid$/ : { $releasename = regsubst($::operatingsystemrelease, '/sid$', '') }
-      default  : { $releasename = $::lsbdistcodename }
-    }
-
     case $::osfamily {
       'RedHat' : {
         yumrepo { 'zabbix':
@@ -77,6 +72,7 @@ class zabbix::repo (
 
       }
       'Debian' : {
+        include ::apt
         if ($::architecture == 'armv6l') {
           apt::source { 'zabbix':
             location => 'http://naizvoru.com/raspbian/zabbix',
@@ -93,7 +89,10 @@ class zabbix::repo (
           }
         } else {
           $operatingsystem = downcase($::operatingsystem)
-
+          case $::operatingsystemrelease {
+            /\/sid$/ : { $releasename = regsubst($::operatingsystemrelease, '/sid$', '') }
+            default  : { $releasename = $::lsbdistcodename }
+          }
           apt::source { 'zabbix':
             location => "http://repo.zabbix.com/zabbix/${zabbix_version}/${operatingsystem}/",
             repos    => 'main',
@@ -105,9 +104,11 @@ class zabbix::repo (
             ,
           }
         }
+        Apt::Source['zabbix'] -> Package<|tag == 'zabbix'|>
+        Class['Apt::Update']  -> Package<|tag == 'zabbix'|>
       }
       default  : {
-        fail('Unrecognized operating system for webserver')
+        fail("Managing a repo on ${::osfamily} is currently not implemented")
       }
     }
   } # end if ($manage_repo)

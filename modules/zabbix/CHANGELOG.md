@@ -1,4 +1,55 @@
-## 2016-5-08 Release 2.3.0
+## 2016-10-13 Release 2.5.1
+
+  * Maintenance: modulesync with voxpupuli defaults
+  * Fix: Workaround for already existing DB dumps
+  * Fix: Correctly handle php packages on Ubuntu 16.04
+  * Fix: Don't write Zabbix3.2 options into older setups
+  * Fix: Create working init script on RHEL6
+
+## 2016-09-19 Release 2.5.0
+
+  * Maintenance: modulesync with voxpupuli defaults
+  * Maintenance: Improved test coverage
+  * Fix: Implement zabbix::startup with proper params (fixes broken init scripts)
+  * Fix: Use correct provider for service on Debian
+  * Feature: Add Fedora 24 support
+
+
+## 2016-08-18 Release 2.4.0
+
+  * Maintenance: modulesync with voxpupuli defaults
+  * Fix: add concat as a dep to metadata,json
+  * Fix: Add package tagging for apt update workflow
+  * Fix: add historyindexcachesize option to server and proxy code
+  * Fix: manage database parameter not pass to zabbix::server
+  * Fix: Incorrect selection of systemd in certain OS
+  * Feature: Manage default_vhost in zabbix main class
+  * Feature: Allow setting ListenIP as "lo" loopback interface
+  * Feature: Set selboolean for zabbix proxy
+  * Feature: Support Custom config file name/path
+  * Feature: Respect user provided Zabbix agent package name in userparameters
+  * Feature: Add manage_service option
+
+
+
+
+## 2016-05-2 Release 2.3.2
+
+  * Maintenance: modulesync with voxpupuli defaults
+  * removed broken jruby tests which broke deployment to the forge
+
+
+## 2016-05-19 Release 2.3.1
+
+  * Fix: correct path to DB schema on all RHEL systems
+  * Fix: don't deal with selinux on non RHEL systems
+  * Maintenance: modulesync with voxpupuli defaults
+  * enhance test matrix
+  * enhance code coverage
+  * bump required stdlib version from 4.1.0 to 4.4.0
+
+
+## 2016-05-08 Release 2.3.0
 
   * fix typo/missing code in userparameters
   * modulesync with voxpupuli defaults #214

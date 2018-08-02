@@ -1,7 +1,7 @@
 {
   "name": "puppet-zabbix",
-  "version": "2.3.0",
-  "author": "Voxpupuli",
+  "version": "2.5.1",
+  "author": "Vox Pupuli",
   "summary": "Installing and maintaining Zabbix. Will install server, proxy, java-gateway and agent on RedHat/Debian/Ubuntu (Incl. exported resources).",
   "license": "Apache-2.0",
   "source": "https://github.com/voxpupuli/puppet-zabbix.git",
@@ -9,13 +9,15 @@
   "issues_url": "https://github.com/voxpupuli/puppet-zabbix/issues",
   "dependencies": [
     {"name":"puppetlabs/postgresql","version_requirement":">= 4.0.0"},
-    {"name":"puppetlabs/stdlib","version_requirement":">= 4.1.0"},
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.4.0"},
     {"name":"puppetlabs/mysql","version_requirement":">= 2.0.0"},
     {"name":"puppetlabs/apache","version_requirement":">= 1.0.0"},
     {"name":"puppetlabs/firewall","version_requirement":">= 1.0.0"},
     {"name":"puppetlabs/ruby","version_requirement":">= 0.4.0"},
     {"name":"puppetlabs/pe_gem","version_requirement":">= 0.1.0"},
-    {"name":"puppetlabs/apt","version_requirement":">= 2.0.0"}
+    {"name":"puppetlabs/apt","version_requirement":">= 2.0.0"},
+    {"name":"puppetlabs/concat","version_requirement":">= 1.2.5"},
+    {"name":"camptocamp/systemd","version_requirement":">= 0.3.0"}
   ],
   "data_provider": null,
   "tags": [
@@ -95,7 +97,8 @@
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
         "12.04",
-        "14.04"
+        "14.04",
+        "16.04"
       ]
     },
     {
@@ -116,6 +119,12 @@
       "operatingsystem": "PCS",
       "operatingsystemrelease": [
         "6.0"
+      ]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "24"
       ]
     },
     {

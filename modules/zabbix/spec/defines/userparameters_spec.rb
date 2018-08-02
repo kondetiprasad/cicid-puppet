@@ -1,4 +1,3 @@
-# encoding: utf-8
 require 'spec_helper'
 
 describe 'zabbix::userparameters', type: :define do
@@ -18,7 +17,8 @@ describe 'zabbix::userparameters', type: :define do
       lsbdistcodename: '',
       id: 'root',
       kernel: 'Linux',
-      path: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/sbin'
+      path: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/sbin',
+      systemd: false
     }
   end
   let(:title) { 'mysqld' }
