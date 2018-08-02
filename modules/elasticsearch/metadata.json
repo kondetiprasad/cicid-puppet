@@ -1,8 +1,8 @@
 {
   "name": "elasticsearch-elasticsearch",
-  "version": "0.10.3",
+  "version": "0.16.2",
   "author": "elasticsearch",
-  "summary": "Module for managing and configuring Elasticsearch nodes",
+  "summary": "[Deprecated] module moved to elastic/elasticsearch",
   "license": "Apache-2.0",
   "source": "https://github.com/elastic/puppet-elasticsearch",
   "project_page": "https://github.com/elastic/puppet-elasticsearch",
@@ -54,7 +54,8 @@
       "operatingsystemrelease": [
         "10.04",
         "12.04",
-        "14.04"
+        "14.04",
+        "16.04"
       ]
     },
     {
@@ -63,22 +64,30 @@
         "12",
         "13"
       ]
+    },
+    {
+      "operatingsystem": "SLES",
+      "operatingsystemrelease": [
+        "12.0",
+        "12.1"
+      ]
     }
   ],
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": ">= 3.3.2"
+      "version_requirement": ">= 3.8.0"
     },
     {
       "name": "puppet",
-      "version_requirement": ">=3.2.0 <4.3.0"
+      "version_requirement": ">=3.8.0 <5.0.0"
     }
   ],
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 3.2.0 < 5.0.0"},
-    {"name":"puppetlabs/apt","version_requirement":">= 1.4.0 < 3.0.0"},
-    {"name":"ceritsc/yum","version_requirement":">= 0.9.6 < 1.0.0"},
-    {"name":"richardc/datacat","version_requirement":">= 0.6.2 < 1.0.0"}
+    {"name":"puppetlabs/apt","version_requirement":">= 2.0.0 < 3.0.0"},
+    {"name":"richardc/datacat","version_requirement":">= 0.6.2 < 1.0.0"},
+    {"name":"puppetlabs/java","version_requirement":">= 1.0.0 < 2.0.0"},
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.6.0 < 5.0.0"},
+    {"name":"ceritsc/yum","version_requirement":">= 0.9.6"}
   ]
 }

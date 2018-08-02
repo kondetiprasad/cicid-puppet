@@ -6,6 +6,29 @@ classes:
   - zabbix::agent
   - mysql::Server
   - apache::mod::php
+  - include java
+  - include elasticsearch
+
+java::package: "java-1.8.0-openjdk-devel"
+elasticsearch::java_install: false
+elasticserch::version: '5.1'
+elasticsearch::repo_version: '5.x'
+elasticsearch::autoupgrade: false
+elasticsearch::status: 'enabled'
+elasticsearch::manage_repo: true
+elasticsearch::config:
+  'cluster':
+    'name': 'elasticsearch'
+  'discovery.zen.ping.unicast.hosts':
+     - zabbix-dev-az-b.demo.training.com
+  'bootstrap.system_call_filter': false
+elasticsearch::instances:
+  '9zest-es1':
+    config:
+      'node.name': 'zabbix-dev-az-b.demo.training.com'
+      'node.data': true
+      'node.master': true
+      'network.host': '0.0.0.0'
 
 apache::mpm_module: 'prefork'
 zabbix::zabbix_version: '3.2'
