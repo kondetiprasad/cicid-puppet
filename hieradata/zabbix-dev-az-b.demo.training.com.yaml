@@ -5,8 +5,8 @@ classes:
   - zabbix::agent
   - mysql::Server
   - apache::mod::php
-  - include java
-  - include elasticsearch
+  - java
+  - elasticsearch
 
 java::package: "java-1.8.0-openjdk-devel"
 elasticsearch::java_install: false
