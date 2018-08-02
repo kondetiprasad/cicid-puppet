@@ -1,14 +1,28 @@
-This module has grown over time based on a range of contributions from
-people using it. If you follow these contributing guidelines your patch
-will likely make it into a release a little quicker.
+# Contributing
 
+Thank you for considering contributing to this module!
+Community contributions are greatly appreciated and eagerly accepted.
+Before putting in the work to contribute to the module, please first:
 
-## Contributing
+* Ensure your feature or fix hasn't already been added or fixed by searching
+    the GitHub issues and pull requests.
+* Consider posting your concern on the
+    [discussion forums](https://discuss.elastic.co/c/elasticsearch) if you have
+    a question or support request rather than a confirmed bug or feature.
+
+## The Contributor License Agreement
+
+Please make sure you have signed the
+[Contributor License Agreement](http://www.elastic.co/contributor-agreement/)
+before contributing to this (or any other) Elastic-supported repository.
+Note that you only need to sign the CLA once.
+
+## Generalized Process
 
 1. Fork the repo.
 
 2. Run the tests. We only take pull requests with passing tests, and
-   it's great to know that you have a clean slate
+   it's great to know that you have a clean slate.
 
 3. Add a test for your change. Only refactoring and documentation
    changes require no new tests. If you are adding functionality
@@ -18,11 +32,10 @@ will likely make it into a release a little quicker.
 
 5. Push to your fork and submit a pull request.
 
-
 ## Dependencies
 
 The testing and development tools have a bunch of dependencies,
-all managed by [bundler](http://bundler.io/) according to the
+all managed by [Bundler](http://bundler.io/) according to the
 [Puppet support matrix](http://docs.puppetlabs.com/guides/platforms.html#ruby-versions).
 
 By default the tests use a baseline version of Puppet.
@@ -35,6 +48,9 @@ you must set an environment variable such as:
 Install the dependencies like so...
 
     bundle install
+
+If you want to run the acceptance tests, `docker` will need to be functional on
+your development machine as well.
 
 ## Syntax and style
 
@@ -50,8 +66,8 @@ check various syntax and style things. You can run these locally with:
 The unit test suite covers most of the code, as mentioned above please
 add tests if you're adding new functionality. If you've not used
 [rspec-puppet](http://rspec-puppet.com/) before then feel free to ask
-about how best to test your new feature. Running the test suite is done
-with:
+about how best to test your new feature.
+Running the test suite is done with:
 
     bundle exec rake spec
 
@@ -59,32 +75,39 @@ Note also you can run the syntax, style and unit tests in one go with:
 
     bundle exec rake test
 
-## Automatically run the Integration tests
+### Automatically run the tests
 
-During development of your puppet module you might want to run your unit tests a couple of times. You can use the following command to automate running the unit tests on every change made in the manifests folder.
+During development of your puppet module you might want to run your unit
+tests a couple of times.
+You can use the following command to automate running the unit tests on
+every change made in the manifests folder.
 
-	bundle exec guard
+    bundle exec guard
 
 ## Integration tests
 
 The unit tests just check the code runs, not that it does exactly what
-we want on a real machine. For that we're using
-[beaker](https://github.com/puppetlabs/beaker).
+we want on a real machine.
+For that we're using [Beaker](https://github.com/puppetlabs/beaker).
 
-This fires up a new virtual machine (using vagrant) and runs a series of
-simple tests against it after applying the module. You can run this
-with:
+Beaker fires up a new virtual machine (using Docker) and runs a series of
+simple tests against it after applying the module. You can run our
+Beaker tests with:
 
     bundle exec rake acceptance
 
-This will run the tests on an CentOS 7.0 virtual machine. You can also
-run the integration tests against Centos 6.5 with.  A list of all configured
-nodesets is in spec/acceptance/nodeset.
+This will use the host described in `spec/acceptance/nodeset/default.yml`
+by default.
+To run against another host, you may either set the `BEAKER_set` environment
+variable to the name of a host described by a `.yml` file in the `nodeset`
+directory or call a rake task with that node's name.
+For example, to run against CentOS 7:
 
-    BEAKER_SET=centos-65-x64 bundle exec rake acceptance
+    bundle exec rake beaker:centos-7-x64
+    # or
+    BEAKER_set=centos-7-x64 bundle exec rake beaker
 
 If you don't want to have to recreate the virtual machine every time you
-can use `BEAKER_DESTROY=no` and `BEAKER_PROVISION=no`. On the first run you will
-at least need `BEAKER_PROVISION` set to yes (the default). The Vagrantfile
-for the created virtual machines will be in `.vagrant/beaker_vagrant_files`.
-
+can use `BEAKER_destroy=no` and `BEAKER_provision=no`.
+On the first run you will at least need `BEAKER_provision` set to yes (the
+default).
