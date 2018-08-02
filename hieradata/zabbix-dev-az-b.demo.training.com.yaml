@@ -7,6 +7,10 @@ classes:
   - apache::mod::php
   - java
   - elasticsearch
+  - kibana
+
+kibana::version: '5.1.1'
+kibana::bind: '0.0.0.0'
 
 java::package: "java-1.8.0-openjdk-devel"
 elasticsearch::java_install: false
