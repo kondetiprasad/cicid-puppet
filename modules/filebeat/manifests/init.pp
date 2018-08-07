@@ -16,6 +16,7 @@
 # @param manage_repo [Boolean] Whether or not the upstream (elastic) repo should be configured or not (default: true)
 # @param service_ensure [String] The ensure parameter on the filebeat service (default: running)
 # @param service_enable [String] The enable parameter on the filebeat service (default: true)
+# @param repo_priority [Integer] Repository priority.  yum and apt supported (default: undef)
 # @param spool_size [Integer] How large the spool should grow before being flushed to the network (default: 2048)
 # @param idle_timeout [String] How often the spooler should be flushed even if spool size isn't reached (default: 5s)
 # @param publish_async [Boolean] If set to true filebeat will publish while preparing the next batch of lines to send (defualt: false)
@@ -31,63 +32,96 @@
 # @param download_url [String] The URL of the zip file that should be downloaded to install filebeat (windows only)
 # @param install_dir [String] Where filebeat should be installed (windows only)
 # @param tmp_dir [String] Where filebeat should be temporarily downloaded to so it can be installed (windows only)
+# @param shutdown_timeout [String] How long filebeat waits on shutdown for the publisher to finish sending events
+# @param beat_name [String] The name of the beat shipper (default: hostname)
+# @param tags [Array] A list of tags that will be included with each published transaction
+# @param queue_size [String] The internal queue size for events in the pipeline
+# @param max_procs [Integer] The maximum number of CPUs that can be simultaneously used
+# @param fields [Hash] Optional fields that should be added to each event output
+# @param fields_under_root [Boolean] If set to true, custom fields are stored in the top level instead of under fields
+# @param processors [Array] Processors that will be added. Commonly used to create processors using hiera.
 # @param prospectors [Hash] Prospectors that will be created. Commonly used to create prospectors using hiera
 # @param prospectors_merge [Boolean] Whether $prospectors should merge all hiera sources, or use simple automatic parameter lookup
+# proxy_address [String] Proxy server to use for downloading files
 class filebeat (
-  $package_ensure    = $filebeat::params::package_ensure,
-  $manage_repo       = $filebeat::params::manage_repo,
-  $service_ensure    = $filebeat::params::service_ensure,
-  $service_enable    = $filebeat::params::service_enable,
-  $service_provider  = $filebeat::params::service_provider,
-  $spool_size        = $filebeat::params::spool_size,
-  $idle_timeout      = $filebeat::params::idle_timeout,
-  $publish_async     = $filebeat::params::publish_async,
-  $registry_file     = $filebeat::params::registry_file,
-  $config_file       = $filebeat::params::config_file,
-  $config_dir        = $filebeat::params::config_dir,
-  $config_dir_mode   = $filebeat::params::config_dir_mode,
-  $config_file_mode  = $filebeat::params::config_file_mode,
-  $purge_conf_dir    = $filebeat::params::purge_conf_dir,
-  $outputs           = $filebeat::params::outputs,
-  $shipper           = $filebeat::params::shipper,
-  $logging           = $filebeat::params::logging,
-  $run_options       = $filebeat::params::run_options,
-  $conf_template     = $filebeat::params::conf_template,
-  $download_url      = $filebeat::params::download_url,
-  $install_dir       = $filebeat::params::install_dir,
-  $tmp_dir           = $filebeat::params::tmp_dir,
-  $prospectors       = {},
-  $prospectors_merge = false,
+  String  $package_ensure       = $filebeat::params::package_ensure,
+  Boolean $manage_repo          = $filebeat::params::manage_repo,
+  Variant[Boolean, Enum['stopped', 'running']] $service_ensure = $filebeat::params::service_ensure,
+  Boolean $service_enable = $filebeat::params::service_enable,
+  Optional[String]  $service_provider = $filebeat::params::service_provider,
+  Optional[Integer] $repo_priority = undef,
+  Integer $spool_size           = $filebeat::params::spool_size,
+  String  $idle_timeout         = $filebeat::params::idle_timeout,
+  Boolean $publish_async        = $filebeat::params::publish_async,
+  String  $registry_file        = $filebeat::params::registry_file,
+  String  $config_file          = $filebeat::params::config_file,
+  String[4,4]  $config_dir_mode = $filebeat::params::config_dir_mode,
+  String  $config_dir           = $filebeat::params::config_dir,
+  String[4,4]  $config_file_mode = $filebeat::params::config_file_mode,
+  Boolean $purge_conf_dir       = $filebeat::params::purge_conf_dir,
+  Hash    $outputs              = $filebeat::params::outputs,
+  Hash    $shipper              = $filebeat::params::shipper,
+  Hash    $logging              = $filebeat::params::logging,
+  Hash    $run_options          = $filebeat::params::run_options,
+  String  $conf_template        = $filebeat::params::conf_template,
+  Optional[Pattern[/^(http(?:s)?\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$/]] $download_url = undef,
+  Optional[String]  $install_dir          = $filebeat::params::install_dir,
+  String  $tmp_dir              = $filebeat::params::tmp_dir,
+  Integer $shutdown_timeout     = $filebeat::params::shutdown_timeout,
+  String  $beat_name            = $filebeat::params::beat_name,
+  Array   $tags                 = $filebeat::params::tags,
+  Integer $queue_size           = $filebeat::params::queue_size,
+  Optional[Integer] $max_procs            = $filebeat::params::max_procs,
+  Hash $fields               = $filebeat::params::fields,
+  Boolean $fields_under_root    = $filebeat::params::fields_under_root,
+  Boolean $disable_config_test  = $filebeat::params::disable_config_test,
+  Array[Hash] $processors       = [],
+  Hash    $prospectors          = {},
+  Optional[Pattern[/^(http(?:s)?\:\/\/[a-zA-Z0-9]+(?:(?:\.|\-)[a-zA-Z0-9]+)+(?:\:\d+)?(?:\/[\w\-]+)*(?:\/?|\/\w+\.[a-zA-Z]{2,4}(?:\?[\w]+\=[\w\-]+)?)?(?:\&[\w]+\=[\w\-]+)*)$/]] $proxy_address = undef
 ) inherits filebeat::params {
 
-  $kernel_fail_message = "${::kernel} is not supported by filebeat."
+  include ::stdlib
 
-  validate_bool($manage_repo, $prospectors_merge)
-
-  if $prospectors_merge {
-    $prospectors_final = hiera_hash('filebeat::prospectors', $prospectors)
-  } else {
-    $prospectors_final = $prospectors
+  $real_download_url = $download_url ? {
+    undef   => "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${package_ensure}-windows-${filebeat::params::url_arch}.zip",
+    default => $download_url,
   }
 
   if $config_file != $filebeat::params::config_file {
     warning('You\'ve specified a non-standard config_file location - filebeat may fail to start unless you\'re doing something to fix this')
   }
 
-  validate_hash($outputs, $logging, $prospectors_final)
-  validate_string($idle_timeout, $registry_file, $config_dir, $package_ensure)
-
-  if $package_ensure == '1.0.0-beta4' or $package_ensure == '1.0.0-rc1' {
-    fail('Filebeat versions 1.0.0-rc1 and before are unsupported because they don\'t parse normal YAML headers')
+  if $package_ensure == 'absent' {
+    $alternate_ensure = 'absent'
+    $real_service_ensure = 'stopped'
+    $file_ensure = 'absent'
+    $directory_ensure = 'absent'
+  } else {
+    $alternate_ensure = 'present'
+    $file_ensure = 'file'
+    $directory_ensure = 'directory'
+    $real_service_ensure = $service_ensure
   }
 
-  anchor { 'filebeat::begin': } ->
-  class { 'filebeat::install': } ->
-  class { 'filebeat::config': } ->
-  class { 'filebeat::service': } ->
-  anchor { 'filebeat::end': }
+  # If we're removing filebeat, do things in a different order to make sure
+  # we remove as much as possible
+  if $package_ensure == 'absent' {
+    anchor { 'filebeat::begin': }
+#    -> class { '::filebeat::config': }
+    -> class { '::filebeat::install': }
+    -> class { '::filebeat::service': }
+    -> anchor { 'filebeat::end': }
+  } else {
+    anchor { 'filebeat::begin': }
+    -> class { '::filebeat::install': }
+ #   -> class { '::filebeat::config': }
+    -> class { '::filebeat::service': }
+    -> anchor { 'filebeat::end': }
+  }
 
-  if !empty($prospectors_final) {
-    create_resources('filebeat::prospector', $prospectors_final)
+  if $package_ensure != 'absent' {
+    if !empty($prospectors) {
+      create_resources('filebeat::prospector', $prospectors)
+    }
   }
 }

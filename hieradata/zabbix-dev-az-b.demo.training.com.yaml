@@ -9,10 +9,12 @@ classes:
   - elasticsearch
   - elastic_stack::repo
   - kibana
+  - filebeat 
 
 elastic_stack::repo::version: 5
 kibana::version: '5.1.1'
-kibana::bind: '0.0.0.0'
+kibana::config: 
+  'server.host': '0.0.0.0'
 
 java::package: "java-1.8.0-openjdk-devel"
 elasticsearch::java_install: false
@@ -39,7 +41,7 @@ apache::mpm_module: 'prefork'
 zabbix::zabbix_version: '3.0'
 apache::default_vhost: false
 zabbix::zabbix_url: '%{::ipaddress_eth0}'
-zabbix::zabbix_server: 'monitoring.xabbix.training.com'
+zabbix::zabbix_server: 'monitoring.demo.training.com'
 zabbix::javagateway: "%{::ipaddress_eth0}"
 zabbix::zabbix_timezone: 'Asia/Kolkata'
 zabbix::javagatewayport: 10052
@@ -47,4 +49,3 @@ zabbix::startjavapollers: 16
 zabbix::database_type: 'mysql'
 zabbix::javagateway::listenip: "0.0.0.0"
 zabbix::javagateway::startpollers: 16
-

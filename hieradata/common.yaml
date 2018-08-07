@@ -3,10 +3,13 @@ classes:
   - timezone
   - ntp
   - zabbix::agent
+  - selinux
+selinux::mode: 'disabled'
+selinux::type: 'targeted'
 
-zabbix::agent::server: "dev.zabbix.az.b.xebia.training.com"
-zabbix::agent::serveractive: "dev.zabbix.az.b.xebia.training.com"
-zabbix::agent::zabbix_version: '2.2' 
+zabbix::agent::server: "zabbix-dev-az-b.demo.training.com"
+zabbix::agent::serveractive: "zabbix-dev-az-b.demo.training.com"
+zabbix::agent::zabbix_version: '3.0' 
 timezone::timezone: 'Asia/Kolkata'
 ulimit::use_default_ulimits: false
 ntp::logfile: /var/log/ntp.log

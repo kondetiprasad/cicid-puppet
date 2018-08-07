@@ -8,7 +8,6 @@ define filebeat::prospector (
   $fields_under_root     = false,
   $ignore_older          = undef,
   $close_older           = undef,
-  $log_type              = undef,
   $doc_type              = 'log',
   $scan_frequency        = '10s',
   $harvester_buffer_size = 16384,
@@ -16,42 +15,73 @@ define filebeat::prospector (
   $backoff               = '1s',
   $max_backoff           = '10s',
   $backoff_factor        = 2,
-  $partial_line_waiting  = '5s',
+  $close_inactive        = '5m',
+  $close_renamed         = false,
+  $close_removed         = true,
+  $close_eof             = false,
+  $clean_inactive        = 0,
+  $clean_removed         = true,
+  $close_timeout         = 0,
   $force_close_files     = false,
   $include_lines         = [],
   $exclude_lines         = [],
   $max_bytes             = '10485760',
   $multiline             = {},
+  $json                  = {},
+  $tags                  = [],
+  $symlinks              = false,
 ) {
 
-  validate_hash($fields, $multiline)
-  validate_array($paths, $exclude_files, $include_lines, $exclude_lines)
+  validate_hash($fields, $multiline, $json)
+  validate_array($paths, $exclude_files, $include_lines, $exclude_lines, $tags)
+  validate_bool($tail_files, $close_renamed, $close_removed, $close_eof, $clean_removed, $symlinks)
 
-  if $log_type {
-    warning('log_type is deprecated, and will be removed prior to a v1.0 release so parameters match the filebeat documentation - use doc_type instead')
-    $real_doc_type = $log_type
-  } else {
-    $real_doc_type = $doc_type
-  }
+  $prospector_template = 'prospector.yml.erb'
 
   case $::kernel {
     'Linux' : {
-      file { "filebeat-${name}":
-        ensure  => $ensure,
-        path    => "${filebeat::config_dir}/${name}.yml",
-        owner   => 'root',
-        group   => 'root',
-        mode    => $::filebeat::config_file_mode,
-        content => template("${module_name}/prospector.yml.erb"),
-        notify  => Service['filebeat'],
+      if !$filebeat::disable_config_test {
+        file { "filebeat-${name}":
+          ensure       => $ensure,
+          path         => "${filebeat::config_dir}/${name}.yml",
+          owner        => 'root',
+          group        => 'root',
+          mode         => $::filebeat::config_file_mode,
+          content      => template("${module_name}/${prospector_template}"),
+          validate_cmd => '/usr/share/filebeat/bin/filebeat -N -configtest -c %',
+          notify       => Service['filebeat'],
+        }
+      } else {
+        file { "filebeat-${name}":
+          ensure  => $ensure,
+          path    => "${filebeat::config_dir}/${name}.yml",
+          owner   => 'root',
+          group   => 'root',
+          mode    => $::filebeat::config_file_mode,
+          content => template("${module_name}/${prospector_template}"),
+          notify  => Service['filebeat'],
+        }
+
       }
     }
     'Windows' : {
-      file { "filebeat-${name}":
-        ensure  => $ensure,
-        path    => "${filebeat::config_dir}/${name}.yml",
-        content => template("${module_name}/prospector.yml.erb"),
-        notify  => Service['filebeat'],
+      $filebeat_path = 'c:\Program Files\Filebeat\filebeat.exe'
+
+      if !$filebeat::disable_config_test {
+        file { "filebeat-${name}":
+          ensure       => $ensure,
+          path         => "${filebeat::config_dir}/${name}.yml",
+          content      => template("${module_name}/${prospector_template}"),
+          validate_cmd => "\"${filebeat_path}\" -N -configtest -c \"%\"",
+          notify       => Service['filebeat'],
+        }
+      } else {
+        file { "filebeat-${name}":
+          ensure  => $ensure,
+          path    => "${filebeat::config_dir}/${name}.yml",
+          content => template("${module_name}/${prospector_template}"),
+          notify  => Service['filebeat'],
+        }
       }
     }
     default : {
