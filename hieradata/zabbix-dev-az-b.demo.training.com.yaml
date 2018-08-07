@@ -9,7 +9,6 @@ classes:
   - elasticsearch
   - elastic_stack::repo
   - kibana
-  - filebeat 
 
 elastic_stack::repo::version: 5
 kibana::version: '5.1.1'

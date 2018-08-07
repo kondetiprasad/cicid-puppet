@@ -4,6 +4,8 @@ classes:
   - ntp
   - zabbix::agent
   - selinux
+  - filebeat
+
 selinux::mode: 'disabled'
 selinux::type: 'targeted'
 
