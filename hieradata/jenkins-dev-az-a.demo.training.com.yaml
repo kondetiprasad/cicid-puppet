@@ -18,6 +18,7 @@ sonarqube::user: 'sonar'
 sonarqube::group: 'sonar'
 sonarqube::service: 'sonar'
 sonarqube::installroot: '/opt/'
+sonarqube::download_url: 'https://binaries.sonarsource.com/Distribution/sonarqube'
 sonarqube::jdbc: 
   url: 'jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance'
   username: 'sonar'
